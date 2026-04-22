@@ -17,6 +17,18 @@ RUN npx tsc -p packages/cache/tsconfig.json
 RUN npx tsc -p packages/queue/tsconfig.json
 RUN npx tsc -p packages/db/tsconfig.json
 
+# Point package main to compiled dist (only affects Docker runtime)
+RUN node -e "
+  const fs = require('fs');
+  const pkgs = ['auth','cache','db','logger','queue','types'];
+  pkgs.forEach(p => {
+    const f = 'packages/' + p + '/package.json';
+    const j = JSON.parse(fs.readFileSync(f));
+    j.main = 'dist/index.js';
+    fs.writeFileSync(f, JSON.stringify(j, null, 2));
+  });
+"
+
 # Build apps
 RUN npx tsc -p apps/api/tsconfig.json
 RUN npx tsc -p apps/worker/tsconfig.json

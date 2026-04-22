@@ -11,7 +11,7 @@ import { BillingPage } from "./pages/BillingPage";
 import { Sidebar, Page } from "./components/Sidebar";
 import { AiAssistant } from "./components/AiAssistant";
 
-function Dashboard({ apiFetch }: { apiFetch: ReturnType<typeof useAuth>["apiFetch"] }) {
+function Dashboard({ apiFetch, onLogout }: { apiFetch: ReturnType<typeof useAuth>["apiFetch"]; onLogout: () => void }) {
   const store = useMemo(() => createStore(apiFetch), [apiFetch]);
   const [page, setPage] = useState<Page>("overview");
 
@@ -26,7 +26,7 @@ function Dashboard({ apiFetch }: { apiFetch: ReturnType<typeof useAuth>["apiFetc
   return (
     <Provider store={store}>
       <div className="layout">
-        <Sidebar page={page} setPage={setPage} />
+        <Sidebar page={page} setPage={setPage} onLogout={onLogout} />
         <main className="main">{content[page]}</main>
         <AiAssistant />
       </div>
@@ -35,7 +35,24 @@ function Dashboard({ apiFetch }: { apiFetch: ReturnType<typeof useAuth>["apiFetc
 }
 
 export default function App() {
-  const { auth, apiFetch } = useAuth();
-  const [authed, setAuthed] = useState(!!auth);
-  return authed ? <Dashboard apiFetch={apiFetch} /> : <AuthPage onLogin={() => setAuthed(true)} />;
+  const { auth, apiFetch, logout, login, register } = useAuth();
+  const [transitioning, setTransitioning] = useState(false);
+
+  const handleLogin = async (email: string, password: string) => {
+    await login(email, password);
+    setTransitioning(true);
+    setTimeout(() => setTransitioning(false), 800);
+  };
+
+  if (transitioning) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+        <span style={{ fontSize: 32 }}>⚡</span>
+      </div>
+    );
+  }
+
+  return auth
+    ? <Dashboard apiFetch={apiFetch} onLogout={logout} />
+    : <AuthPage onLogin={handleLogin} onRegister={register} />;
 }

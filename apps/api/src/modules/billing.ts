@@ -12,7 +12,7 @@ import { authMiddleware } from "../middleware/auth";
 import { logger } from "@pulseops/logger";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2025-05-28.basil"
+  apiVersion: "2023-10-16" as any
 });
 
 // Map Stripe price IDs to internal tiers — extend as needed
@@ -78,7 +78,7 @@ export async function billingRoutes(app: FastifyInstance) {
     let event: Stripe.Event;
     try {
       event = stripe.webhooks.constructEvent(
-        req.rawBody as Buffer,
+        (req as any).rawBody as Buffer,
         sig,
         secret
       );

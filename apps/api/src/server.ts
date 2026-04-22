@@ -2,7 +2,6 @@ import { config } from "dotenv";
 import { resolve } from "path";
 config({ path: resolve(__dirname, "../../../.env") });
 import Fastify from "fastify";
-import { logger } from "@pulseops/logger";
 import { EventSchema } from "@pulseops/types";
 import { insertEvent, getEvents } from "@pulseops/db";
 import { eventQueue } from "@pulseops/queue";
@@ -18,7 +17,22 @@ import { rateLimitMiddleware } from "./middleware/rateLimit";
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || "http://localhost:5173").split(",");
 
 async function start() {
-  const app = Fastify({ loggerInstance: logger });
+  const app = Fastify({ logger: true });
+
+  // Store raw body for Stripe webhook verification
+  app.addHook("preHandler", async (req, reply) => {
+    if (req.url.startsWith("/webhooks/stripe")) {
+      const chunks: Buffer[] = [];
+      const onData = (chunk: Buffer) => chunks.push(chunk);
+      const onEnd = () => {
+        (req as any).rawBody = Buffer.concat(chunks);
+        req.raw.removeListener("data", onData);
+        req.raw.removeListener("end", onEnd);
+      };
+      req.raw.on("data", onData);
+      req.raw.on("end", onEnd);
+    }
+  });
 
   app.addHook("onRequest", async (req, reply) => {
     if (["POST", "PUT", "PATCH", "DELETE"].includes(req.method)) {
@@ -38,7 +52,7 @@ async function start() {
   await app.register(tenantRoutes);
   await app.register(aiRoutes);
 
-  const eventsPreHandler = [authMiddleware, rateLimitMiddleware(), billingMiddleware];
+  const eventsPreHandler = [authMiddleware, rateLimitMiddleware(), billingMiddleware] as any;
 
   app.get("/events", { preHandler: eventsPreHandler }, async (req) => {
     return getEvents(req.user!.accountId);
@@ -60,7 +74,7 @@ async function start() {
     const event = { ...parsed.data, accountId: req.user!.accountId };
     const safeType = event.type.replace(/[\r\n]/g, "");
     const safeKey = event.idempotencyKey.replace(/[\r\n]/g, "");
-    logger.info({ type: safeType, key: safeKey }, "Ingesting event");
+    app.log.info({ type: safeType, key: safeKey }, "Ingesting event");
 
     const result = await insertEvent(event);
 
@@ -76,6 +90,6 @@ async function start() {
 }
 
 start().catch((err) => {
-  logger.error(err);
+  console.error(err);
   process.exit(1);
 });

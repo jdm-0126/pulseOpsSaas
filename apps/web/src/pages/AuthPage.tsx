@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { useAuth } from "../hooks/useAuth";
 
-export function AuthPage({ onLogin }: { onLogin: () => void }) {
-  const { login, register } = useAuth();
+type Props = {
+  onLogin: (email: string, password: string) => Promise<void>;
+  onRegister: (email: string, password: string) => Promise<void>;
+};
+
+export function AuthPage({ onLogin, onRegister }: Props) {
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -15,12 +18,10 @@ export function AuthPage({ onLogin }: { onLogin: () => void }) {
     setLoading(true);
     try {
       if (mode === "register") {
-        await register(email, password);
+        await onRegister(email, password);
         setMode("login");
-        setError("");
       } else {
-        await login(email, password);
-        onLogin();
+        await onLogin(email, password);
       }
     } catch (err: any) {
       setError(err.message);

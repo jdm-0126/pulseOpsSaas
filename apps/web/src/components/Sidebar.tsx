@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { useAuth } from "../hooks/useAuth";
 
 type Page = "overview" | "events" | "analytics" | "members" | "billing";
 
@@ -11,8 +10,7 @@ const NAV: { id: Page; icon: string; label: string }[] = [
   { id: "billing",   icon: "💳", label: "Billing"   },
 ];
 
-export function Sidebar({ page, setPage }: { page: Page; setPage: (p: Page) => void }) {
-  const { logout } = useAuth();
+export function Sidebar({ page, setPage, onLogout }: { page: Page; setPage: (p: Page) => void; onLogout: () => void }) {
   const [open, setOpen] = useState(false);
 
   // Close sidebar on resize to desktop
@@ -53,7 +51,7 @@ export function Sidebar({ page, setPage }: { page: Page; setPage: (p: Page) => v
           ))}
         </nav>
         <div className="sidebar-bottom">
-          <button className="nav-item" onClick={logout} style={{ width: "100%" }}>
+          <button className="nav-item" onClick={onLogout} style={{ width: "100%" }}>
             <span className="icon">🚪</span> Sign Out
           </button>
         </div>

@@ -11,6 +11,7 @@
     "declarationMap": true,
     "sourceMap": true,
     "baseUrl": ".",
+    "rootDir": ".",
     "paths": {
       "@pulseops/db": ["packages/db/src"],
       "@pulseops/queue": ["packages/queue/src"],

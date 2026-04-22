@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    container_name: pulseops-api
+    env_file: .env
+    ports:
+      - "3001:3001"
+    depends_on:
+      - postgres
+      - redis
+
+  worker:
+    build: .
+    command: ["node", "apps/worker/dist/worker.js"]
+    env_file: .env
+    depends_on:
+      - redis
+      - postgres
+
+  web:
+    image: nginx:alpine
+    container_name: pulseops-web
+    volumes:
+      - ./apps/web/dist:/usr/share/nginx/html
+    ports:
+      - "8080:80"
+
+  postgres:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: pulse
+      POSTGRES_PASSWORD: pulse
+      POSTGRES_DB: pulseops
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"

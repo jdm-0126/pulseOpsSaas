@@ -1,0 +1,26 @@
+{
+  "name": "@pulseops/api",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc -p tsconfig.json"
+  },
+  "dependencies": {
+    "@fastify/formbody": "^7.4.0",
+    "@pulseops/auth": "*",
+    "@pulseops/cache": "*",
+    "@pulseops/db": "*",
+    "@pulseops/logger": "*",
+    "@pulseops/queue": "*",
+    "@pulseops/types": "*",
+    "dotenv": "^16.4.0",
+    "fastify": "^4.26.0",
+    "openai": "^6.34.0",
+    "stripe": "^14.0.0",
+    "zod": "^3.22.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "ts-node-dev": "^2.0.0"
+  }
+}

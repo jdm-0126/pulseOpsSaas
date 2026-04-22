@@ -1,0 +1,12 @@
+{
+  "name": "@pulseops/db",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "dependencies": {
+    "pg": "^8.11.0"
+  },
+  "devDependencies": {
+    "@types/pg": "^8.11.0",
+    "@types/node": "^20.0.0"
+  }
+}

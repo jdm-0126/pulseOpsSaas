@@ -1,0 +1,8 @@
+{
+  "name": "@pulseops/types",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "dependencies": {
+    "zod": "^3.22.0"
+  }
+}

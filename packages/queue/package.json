@@ -1,0 +1,11 @@
+{
+  "name": "@pulseops/queue",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "dependencies": {
+    "bullmq": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}

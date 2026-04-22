@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "CommonJS",
+    "moduleResolution": "Node10",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@pulseops/db": ["packages/db/src"],
+      "@pulseops/queue": ["packages/queue/src"],
+      "@pulseops/logger": ["packages/logger/src"],
+      "@pulseops/types": ["packages/types/src"],
+      "@pulseops/auth": ["packages/auth/src"],
+      "@pulseops/cache": ["packages/cache/src"]
+    }
+  }
+}

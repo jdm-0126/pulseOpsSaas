@@ -1,0 +1,12 @@
+{
+  "name": "@pulseops/logger",
+  "version": "0.0.1",
+  "main": "dist/index.js",
+  "dependencies": {
+    "pino": "^8.19.0",
+    "pino-pretty": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}
